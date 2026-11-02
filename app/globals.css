@@ -1,0 +1,185 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #c7c7cb;
+  --color-ink: #2f343c;
+  --color-ink-deep: #24282f;
+  --color-ink-soft: #3b424b;
+  --color-coral: #ef9080;
+  --color-coral-deep: #e07c6c;
+  --color-lime: #b9e04e;
+  --color-lime-deep: #a3cc3a;
+  --color-violet: #6a3bf0;
+  --color-violet-soft: #8a63f4;
+  --color-mist: #f3f3f5;
+  --color-haze: #9aa1ab;
+  --color-line: #e7e7ea;
+
+  --color-tier-brute: #ef9080;
+  --color-tier-better: #e6b64a;
+  --color-tier-optimal: #a3cc3a;
+
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-code), ui-monospace, SFMono-Regular, monospace;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-violet) 25%, white);
+}
+
+/* outer floating frame, like the reference composition */
+.frame {
+  border-radius: 44px;
+  box-shadow:
+    0 40px 90px -30px rgba(30, 33, 39, 0.55),
+    0 12px 30px -12px rgba(30, 33, 39, 0.35);
+}
+
+@media (max-width: 640px) {
+  .frame {
+    border-radius: 28px;
+  }
+}
+
+/* dark hero surface: photographic darkening + slate gradient */
+.hero-surface {
+  background:
+    radial-gradient(120% 90% at 82% 8%, rgba(126, 140, 160, 0.35) 0%, rgba(60, 68, 80, 0) 55%),
+    radial-gradient(90% 80% at 88% 78%, rgba(180, 196, 214, 0.22) 0%, rgba(47, 52, 60, 0) 60%),
+    radial-gradient(70% 70% at 10% 0%, rgba(106, 59, 240, 0.16) 0%, rgba(47, 52, 60, 0) 60%),
+    linear-gradient(155deg, #3c434d 0%, #343a43 38%, #2b3037 68%, #24282f 100%);
+}
+
+/* faint blueprint grid + glass sheen so the dark area isn't flat */
+.hero-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 76px 76px;
+  mask-image: radial-gradient(120% 100% at 78% 20%, black 0%, transparent 72%);
+}
+
+.glass-card {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.06) 55%, rgba(255, 255, 255, 0.03) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(14px);
+}
+
+.glass-card-dim {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.hairline {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.scrollbar-slim {
+  scrollbar-width: thin;
+  scrollbar-color: #cfd2d8 transparent;
+}
+.scrollbar-slim::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.scrollbar-slim::-webkit-scrollbar-thumb {
+  background: #cfd2d8;
+  border-radius: 999px;
+}
+
+/* code blocks */
+.code-surface {
+  background: #24282f;
+  color: #e8eaee;
+}
+
+.code-surface .tok-key {
+  color: #c8a6ff;
+}
+.code-surface .tok-str {
+  color: #b9e04e;
+}
+.code-surface .tok-num {
+  color: #f0b47f;
+}
+.code-surface .tok-com {
+  color: #7d8695;
+  font-style: italic;
+}
+.code-surface .tok-fn {
+  color: #8fd0ff;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise {
+  animation: rise 0.45s ease-out both;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.dot {
+  animation: pulse-dot 1.2s ease-in-out infinite;
+}
+.dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #eeeef1;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 50%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.85), transparent);
+  animation: sweep 1.4s ease-in-out infinite;
+}
