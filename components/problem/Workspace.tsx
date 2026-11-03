@@ -7,7 +7,7 @@ import { LANGUAGE_OPTIONS, type Explanation, type SolutionPack, type Tier } from
 import type { VizTrace } from "@/lib/viz";
 import { VizPlayer } from "@/components/viz/VizPlayer";
 import { Prose } from "@/components/ui/Prose";
-import { ArrowRight, Bolt, ChevronDown, External, Sparkle } from "@/components/ui/Icons";
+import { ArrowRight, Bolt, ChevronDown, External, Sparkle, XIcon as X } from "@/components/ui/Icons";
 import {
   Card,
   DifficultyPill,
@@ -68,6 +68,7 @@ export function Workspace({
   const [traces, setTraces] = useState<Partial<Record<Tier, VizTrace>>>({});
   const [vizState, setVizState] = useState<LoadState>("idle");
   const [vizError, setVizError] = useState("");
+  const [manualCode, setManualCode] = useState("");
 
   const approachFor = useCallback(
     (tier: Tier) => solutions?.approaches.find((a) => a.tier === tier) ?? null,
@@ -422,6 +423,54 @@ export function Workspace({
               Tip: generate the solutions tab first so the visual can highlight the exact code it is drawing.
             </p>
           )}
+          {/* Manual code writer section - allows users to write their own code and visualise it */}
+          {vizState !== "loading" && vizState !== "error" ? (
+            <Card className="!p-4">
+              <div className="flex flex-col space-y-4">
+                <div>
+                  <SectionTitle eyebrow="custom" title="Write your own code" />
+                  <p className="-mt-3 text-[11px] leading-relaxed text-ink/50">
+                    Write your implementation and watch it visualise frame by frame.
+                  </p>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <textarea
+                    placeholder="function twoSum(nums, target) { const seen = new Map(); ... }"
+                    rows={8}
+                    className="w-full rounded-[12px] border border-ink/20 bg-ink/50 text-[12px] text-ink p-3 focus:outline-none focus:ring-2 focus:ring-violet/50 resize-y"
+                    value={manualCode ?? ""}
+                    onChange={(e) => setManualCode(e.target.value)}disabled={(vizState as LoadState) === "loading"}
+                    />
+                  <div className="space-y-3">
+                    <button
+                      type="button"
+                      onClick={() => void loadTrace(vizTier)}
+                      className="group inline-flex w-full items-center justify-center gap-2 rounded-[10px] border border-line px-3 py-2.5 text-[11px] font-bold text-ink/70 transition:hover:border-violet/40 hover:bg-violet/5 hover:text-violet"
+                    >
+                      <Bolt className="h-3.5 w-3.5" />
+                      Visualise My Code
+                      <ArrowRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setManualCode('')}
+                      className="group inline-flex w-full items-center justify-center rounded-[10px] border border-line px-3 py-2.5 text-[11px] font-bold text-ink/50 transition:hover:border-ink/40 hover:bg-mist/50"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                      Clear
+                      <ArrowRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
+                    </button>
+                  </div>
+                </div>
+            </div>
+            </Card>
+          ) : null}
+
+          {solutions ? null : (
+            <p className="text-center text-[10.5px] text-ink/40">
+              Tip: generate the solutions tab first so the visual can highlight the exact code it is drawing.
+            </p>
+          )}
         </div>
       ) : null}
 
@@ -493,6 +542,54 @@ export function Workspace({
                 </p>
               </div>
             </div>
+          )}
+          {/* Manual code writer section - allows users to write their own code and visualise it */}
+          {vizState !== "loading" && vizState !== "error" ? (
+            <Card className="!p-4">
+              <div className="flex flex-col space-y-4">
+                <div>
+                  <SectionTitle eyebrow="custom" title="Write your own code" />
+                  <p className="-mt-3 text-[11px] leading-relaxed text-ink/50">
+                    Write your implementation and watch it visualise frame by frame.
+                  </p>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <textarea
+                    placeholder="function twoSum(nums, target) { const seen = new Map(); ... }"
+                    rows={8}
+                    className="w-full rounded-[12px] border border-ink/20 bg-ink/50 text-[12px] text-ink p-3 focus:outline-none focus:ring-2 focus:ring-violet/50 resize-y"
+                    value={manualCode ?? ""}
+                    onChange={(e) => setManualCode(e.target.value)}disabled={(vizState as LoadState) === "loading"}
+                    />
+                  <div className="space-y-3">
+                    <button
+                      type="button"
+                      onClick={() => void loadTrace(vizTier)}
+                      className="group inline-flex w-full items-center justify-center gap-2 rounded-[10px] border border-line px-3 py-2.5 text-[11px] font-bold text-ink/70 transition:hover:border-violet/40 hover:bg-violet/5 hover:text-violet"
+                    >
+                      <Bolt className="h-3.5 w-3.5" />
+                      Visualise My Code
+                      <ArrowRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setManualCode('')}
+                      className="group inline-flex w-full items-center justify-center rounded-[10px] border border-line px-3 py-2.5 text-[11px] font-bold text-ink/50 transition:hover:border-ink/40 hover:bg-mist/50"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                      Clear
+                      <ArrowRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
+                    </button>
+                  </div>
+                </div>
+            </div>
+            </Card>
+          ) : null}
+
+          {solutions ? null : (
+            <p className="text-center text-[10.5px] text-ink/40">
+              Tip: generate the solutions tab first so the visual can highlight the exact code it is drawing.
+            </p>
           )}
         </div>
       ) : null}
@@ -570,6 +667,54 @@ export function Workspace({
                 </div>
               ) : null}
             </div>
+          )}
+          {/* Manual code writer section - allows users to write their own code and visualise it */}
+          {vizState !== "loading" && vizState !== "error" ? (
+            <Card className="!p-4">
+              <div className="flex flex-col space-y-4">
+                <div>
+                  <SectionTitle eyebrow="custom" title="Write your own code" />
+                  <p className="-mt-3 text-[11px] leading-relaxed text-ink/50">
+                    Write your implementation and watch it visualise frame by frame.
+                  </p>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <textarea
+                    placeholder="function twoSum(nums, target) { const seen = new Map(); ... }"
+                    rows={8}
+                    className="w-full rounded-[12px] border border-ink/20 bg-ink/50 text-[12px] text-ink p-3 focus:outline-none focus:ring-2 focus:ring-violet/50 resize-y"
+                    value={manualCode ?? ""}
+                    onChange={(e) => setManualCode(e.target.value)}disabled={(vizState as LoadState) === "loading"}
+                    />
+                  <div className="space-y-3">
+                    <button
+                      type="button"
+                      onClick={() => void loadTrace(vizTier)}
+                      className="group inline-flex w-full items-center justify-center gap-2 rounded-[10px] border border-line px-3 py-2.5 text-[11px] font-bold text-ink/70 transition:hover:border-violet/40 hover:bg-violet/5 hover:text-violet"
+                    >
+                      <Bolt className="h-3.5 w-3.5" />
+                      Visualise My Code
+                      <ArrowRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setManualCode('')}
+                      className="group inline-flex w-full items-center justify-center rounded-[10px] border border-line px-3 py-2.5 text-[11px] font-bold text-ink/50 transition:hover:border-ink/40 hover:bg-mist/50"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                      Clear
+                      <ArrowRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
+                    </button>
+                  </div>
+                </div>
+            </div>
+            </Card>
+          ) : null}
+
+          {solutions ? null : (
+            <p className="text-center text-[10.5px] text-ink/40">
+              Tip: generate the solutions tab first so the visual can highlight the exact code it is drawing.
+            </p>
           )}
         </div>
       ) : null}

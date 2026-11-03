@@ -15,18 +15,23 @@ export async function POST(request: Request) {
       title?: string;
       code?: string;
       idea?: string;
+      manualCode?: string;
     };
     if (!body.slug) return Response.json({ error: "Missing problem slug." }, { status: 400 });
 
     const tier = ["brute", "better", "optimal"].includes(body.tier ?? "") ? body.tier! : "optimal";
     const problem = await getProblem(body.slug);
 
+    // Use manual code if provided, otherwise generate from model
+    const code = body.manualCode || (body.code?.slice(0, 4000) || undefined);
+    const idea = body.manualCode ? body.manualCode : (body.idea || undefined);
+
     const raw = await chatJson(
       visualisationMessages(problem, {
         tier,
         title: body.title || (tier === "brute" ? "brute force" : tier === "better" ? "better" : "optimal solution"),
-        code: body.code?.slice(0, 4000),
-        idea: body.idea,
+        code,
+        idea,
       }),
       { maxTokens: 24000, temperature: 0.3, timeoutMs: 240000 },
     );

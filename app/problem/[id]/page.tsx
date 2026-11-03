@@ -36,6 +36,11 @@ function ProblemHeader({ problem }: { problem: Problem }) {
           <span className="font-mono text-[12px] font-semibold text-white/40">#{problem.number}</span>
           <DifficultyPill value={problem.difficulty} />
           <span className="text-[10.5px] font-semibold text-white/40">acceptance {problem.acceptance}</span>
+          {problem.paidOnly ? (
+            <span className="rounded-full bg-[#f4c26b] px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-[0.1em] text-[#3d2c07]">
+              premium
+            </span>
+          ) : null}
         </div>
         <h1 className="mt-2.5 text-[clamp(1.7rem,3.6vw,2.6rem)] font-extrabold leading-tight tracking-[-0.03em] text-white">
           {problem.title}

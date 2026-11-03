@@ -1,6 +1,6 @@
 import { LeetCodeError } from "./leetcode";
 import { LLMError } from "./llm";
-import type { Approach, CompanyHit, SolutionPack, Tier } from "./types";
+import type { Approach, CompanyHit, Reconstruction, SolutionPack, Tier } from "./types";
 
 export function toErrorResponse(err: unknown): Response {
   if (err instanceof LeetCodeError || err instanceof LLMError) {
@@ -80,6 +80,32 @@ export function normaliseSolutions(raw: unknown): SolutionPack {
       .map((p) => str(p))
       .filter(Boolean)
       .slice(0, 6),
+  };
+}
+
+export function normaliseReconstruction(raw: unknown): Reconstruction {
+  const o = (raw ?? {}) as Record<string, unknown>;
+  const statement = str(o.statement);
+  if (!statement) throw new LLMError("The model did not manage to write a practice question. Please retry.", 502);
+
+  const examples = list(o.examples)
+    .map((e) => {
+      const ex = (e ?? {}) as Record<string, unknown>;
+      // Tolerate the model answering with flat strings, or with "input"/"output" pairs.
+      if (typeof e === "string") return { input: str(e), output: "" };
+      return { input: str(ex.input), output: str(ex.output), explanation: str(ex.explanation) || undefined };
+    })
+    .filter((e) => e.input || e.output)
+    .slice(0, 4);
+
+  return {
+    statement,
+    examples: examples.length ? examples : [{ input: "as described above", output: "." }],
+    constraints: list(o.constraints)
+      .map((c) => str(c))
+      .filter(Boolean)
+      .slice(0, 8),
+    followUp: str(o.followUp) || undefined,
   };
 }
 

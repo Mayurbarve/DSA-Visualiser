@@ -89,6 +89,45 @@ Explain it visually-friendly: describe what should appear on screen as the algor
   ];
 }
 
+/**
+ * Premium problems: LeetCode returns no statement for them, so we write a
+ * LeetCode-style practice question with the same title, difficulty and tags.
+ */
+export function reconstructionMessages(problem: Problem) {
+  const known = problem.tags.length ? problem.tags.join(", ") : "n/a";
+  return [
+    {
+      role: "system" as const,
+      content: `A learner opened a LeetCode Premium problem, so the official statement is locked. Write a faithful LeetCode-STYLE practice version of that question — the kind of wording, formatting and example data LeetCode would use — so they can still practise the pattern today.
+
+Reply with ONE JSON object only — no markdown fences, no commentary:
+{
+  "statement": "2-4 short paragraphs: what the input is, exactly what the function must return, and any definition the reader needs. Plain text, no headings, no 'Example' blocks (those go in the examples field).",
+  "examples": [{"input": "nums = [2,7,11,15], target = 9", "output": "[0,1]", "explanation": "one optional line"}],
+  "constraints": ["1 <= nums.length <= 10^4", "-10^9 <= nums[i] <= 10^9"],
+  "followUp": "one optional sentence: how to do it faster or under a tighter bound"
+}
+
+Hard rules:
+- Use the problem's real title, tags (${known}) and difficulty to pin down the intended task. If you recognise the canonical problem, reproduce its task faithfully; otherwise infer the most standard problem that title describes.
+- 2 to 3 examples, every one internally consistent (the output must actually follow from the input).
+- 3 to 6 constraints with concrete bounds that fit the difficulty: Easy → small bounds, Hard → large bounds and tighter limits.
+- Never mention LeetCode, Premium, subscriptions, or that this was written by an AI inside the statement text.
+- No code, no solution, no hints about the approach: this is the question only.
+- Keep it compact — this entire object should stay well under 1200 tokens.`,
+    },
+    {
+      role: "user" as const,
+      content: `Problem: LeetCode ${problem.number} — ${problem.title}
+Difficulty: ${problem.difficulty}
+Topics: ${known}
+Acceptance rate: ${problem.acceptance}${problem.examples ? `\nKnown raw example inputs (one line per argument):\n${truncate(problem.examples, 600)}` : ""}
+
+The official statement is unavailable. Write the practice version JSON now.`,
+    },
+  ];
+}
+
 const DSL = `
 Each frame is a snapshot. Use only these structure objects:
 
